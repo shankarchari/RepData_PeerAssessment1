@@ -1,8 +1,7 @@
 # Reproducible Research: Peer Assessment 1
 
 
-## Loading and preprocessing the data
-
+## Q1 Loading and preprocessing the data
 
 ```r
 # Load required libraries
@@ -100,7 +99,8 @@ calcStepsPerDay <- function(data) {
     return(stepsPerDay)
 }
 stepsPerDay <- calcStepsPerDay(new_data)
-plot(x = stepsPerDay$date, y = stepsPerDay$V1, type= "h")
+plot(x = stepsPerDay$date, y = stepsPerDay$V1, type= "h", main = "Q2 Total No of Steps Taken Each Day",
+     xlab = "Days", ylab = "Steps(total)")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
@@ -110,6 +110,7 @@ mean <- mean(stepsPerDay$V1)
 median <- median(stepsPerDay$V1)
 ```
 
+# Q3
 ### Mean and Median are 9354.2295082 and 10395 respectively
 
 ## What is the average daily activity pattern?
@@ -122,7 +123,8 @@ average <- ddply(
         mean(x$steps, na.rm = T)
     }
 )
-plot(x = average$interval, y = average$V1, type = "l")
+plot(x = average$interval, y = average$V1, type = "l", main = "Q4 Average No. Of Steps Taken(Time Series)",
+     xlab = "5 Mins Interval", ylab = "Steps(Average)")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
@@ -130,10 +132,20 @@ plot(x = average$interval, y = average$V1, type = "l")
 ```r
 maxInterval <- average[which.max(average$V1),]
 ```
+# Q5
 ### 835th 5 minute interval contains the maximum number steps across all days.
 
 
 ## Imputing missing values
+
+### Q6. Impute Strategy
+>Missing variables are replaced with the population mean of the given interval.
+
+#### Steps
+* Identify the rows having NAs using complete cases.
+* Reuse the average data calculated for every 5 minute interval
+* Iterate through all the rows and find the NA rows
+* Replace NAs with calculated averages.
 
 
 ```r
@@ -147,7 +159,7 @@ for(i in 1 : nrow(new_data)) {
     } 
 }
 stepsPerDay <- calcStepsPerDay(new_data)
-plot(x = stepsPerDay$date, y = stepsPerDay$V1, type= "h")
+plot(x = stepsPerDay$date, y = stepsPerDay$V1, type= "h", main = "Q7 Total No of Steps Taken Each Day After Imputing", xlab = "Days", ylab = "Steps(total)")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
@@ -183,8 +195,7 @@ aveWeekendInterval <- ddply(
         mean(x$steps, na.rm = T)
     }
 )
-
-p1 <- ggplot(aveWeekdayInterval, aes(interval, V1)) + geom_line()
+p1 <- ggplot(aveWeekdayInterval, aes(interval, V1)) + geom_line() + ggtitle("Q8. Average number of steps taken     across weekdays and weekends")
 p2 <- ggplot(aveWeekendInterval, aes(interval, V1)) + geom_line()
 
 gl = lapply(list(p1,p2), ggplotGrob)     
